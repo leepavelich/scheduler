@@ -7,3 +7,25 @@ export const getAppointmentsForDay = (state, day) => {
 
   return selectedDay.appointments.map((i) => appointments[i]);
 };
+
+export const getInterview = (state, interview) => {
+  const { appointments, interviewers } = state;
+
+  for (let index in appointments) {
+    const appointment = appointments[index].interview;
+
+    if (
+      appointment &&
+      interview &&
+      appointment.student === interview.student &&
+      appointment.interviewer === interview.interviewer
+    ) {
+      return {
+        ...interview,
+        interviewer: interviewers[interview.interviewer],
+      };
+    }
+  }
+
+  return null;
+};
