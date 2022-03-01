@@ -62,12 +62,11 @@ export default function useApplicationData() {
 
   const updateSpots = (appointments) => {
     const days = [...state.days]; // shallow copy
-    return days.map((stateDay) => {
-      const day = { ...stateDay };
-      const spots = day.appointments.filter(
+    return days.map((shallowDay) => {
+      const day = { ...shallowDay };
+      day.spots = day.appointments.filter(
         (app) => !appointments[app].interview
       ).length;
-      day.spots = spots;
       return day;
     });
   };
@@ -84,8 +83,11 @@ export default function useApplicationData() {
 
     return axios.put(`/api/appointments/${id}`, appointment).then((res) => {
       if (res.status === 204) {
-        const days = updateSpots(appointments);
-        dispatch({ type: SET_INTERVIEW, appointments, days });
+        dispatch({
+          type: SET_INTERVIEW,
+          appointments,
+          days: updateSpots(appointments),
+        });
       }
     });
   };
@@ -102,8 +104,11 @@ export default function useApplicationData() {
 
     return axios.delete(`/api/appointments/${id}`, appointment).then((res) => {
       if (res.status === 204) {
-        const days = updateSpots(appointments);
-        dispatch({ type: SET_INTERVIEW, appointments, days });
+        dispatch({
+          type: SET_INTERVIEW,
+          appointments,
+          days: updateSpots(appointments),
+        });
       }
     });
   };
