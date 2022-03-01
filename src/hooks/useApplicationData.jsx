@@ -65,7 +65,7 @@ export default function useApplicationData() {
     return days.map((shallowDay) => {
       const day = { ...shallowDay };
       day.spots = day.appointments.filter(
-        (app) => !appointments[app].interview
+        (appointment) => !appointments[appointment].interview
       ).length;
       return day;
     });
