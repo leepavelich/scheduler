@@ -30,17 +30,6 @@ export default function useApplicationData() {
         };
 
       case SET_INTERVIEW: {
-        const updateSpots = (appointments) => {
-          const days = [...state.days]; // shallow copy
-          return days.map((shallowDay) => {
-            const day = { ...shallowDay };
-            day.spots = day.appointments.filter(
-              (appointment) => !appointments[appointment].interview
-            ).length;
-            return day;
-          });
-        };
-
         const appointment = {
           ...state.appointments[action.id],
           interview: action.interview ? { ...action.interview } : null,
@@ -50,10 +39,19 @@ export default function useApplicationData() {
           [action.id]: appointment,
         };
 
+        // update spots, accounting for shallow copy
+        const days = [...state.days].map((shallowDay) => {
+          const day = { ...shallowDay };
+          day.spots = day.appointments.filter(
+            (appointment) => !appointments[appointment].interview
+          ).length;
+          return day;
+        });
+
         return {
           ...state,
           appointments,
-          days: updateSpots(appointments),
+          days,
         };
       }
 
