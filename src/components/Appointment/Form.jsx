@@ -6,9 +6,11 @@ import Button from "components/Button";
 export default function Form(props) {
   const [student, setStudent] = useState(props.student || "");
   const [interviewer, setInterviewer] = useState(props.interviewer || null);
+  const [error, setError] = useState("");
 
   const reset = () => {
     setStudent("");
+    setError("");
     setInterviewer("");
   };
 
@@ -18,6 +20,12 @@ export default function Form(props) {
   };
 
   const save = () => {
+    if (student === "") {
+      setError("Student name cannot be blank");
+      return;
+    }
+
+    setError("");
     props.onSave(student, interviewer);
   };
 
@@ -32,7 +40,9 @@ export default function Form(props) {
             placeholder="Enter Student Name"
             value={student}
             onChange={(event) => setStudent(event.target.value)}
+            data-testid="student-name-input"
           />
+          <section className="appointment__validation">{error}</section>
         </form>
         <InterviewerList
           value={interviewer}
