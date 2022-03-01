@@ -20,6 +20,7 @@ export default function useApplicationData() {
           ...state,
           day: action.day,
         };
+
       case SET_APPLICATION_DATA:
         return {
           ...state,
@@ -27,13 +28,35 @@ export default function useApplicationData() {
           appointments: action.appointments,
           interviewers: action.interviewers,
         };
+
       case SET_INTERVIEW: {
+        const updateSpots = (appointments) => {
+          const days = [...state.days]; // shallow copy
+          return days.map((shallowDay) => {
+            const day = { ...shallowDay };
+            day.spots = day.appointments.filter(
+              (appointment) => !appointments[appointment].interview
+            ).length;
+            return day;
+          });
+        };
+
+        const appointment = {
+          ...state.appointments[action.id],
+          interview: action.interview ? { ...action.interview } : null,
+        };
+        const appointments = {
+          ...state.appointments,
+          [action.id]: appointment,
+        };
+
         return {
           ...state,
-          appointments: action.appointments,
-          days: action.days,
+          appointments,
+          days: updateSpots(appointments),
         };
       }
+
       default:
         throw new Error(
           `Tried to reduce with unsupported action type: ${action.type}`
@@ -43,6 +66,7 @@ export default function useApplicationData() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  // database data
   useEffect(() => {
     Promise.all([
       axios.get("/api/days"),
@@ -56,61 +80,26 @@ export default function useApplicationData() {
         interviewers: all[2].data,
       });
     });
+
+    // websocket
+    const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    ws.onmessage = (event) => {
+      const { type, id, interview } = JSON.parse(event.data);
+
+      if (type === "SET_INTERVIEW") {
+        dispatch({ type, id, interview });
+      }
+    };
   }, []);
 
   const setDay = (day) => dispatch({ type: SET_DAY, day });
 
-  const updateSpots = (appointments) => {
-    const days = [...state.days]; // shallow copy
-    return days.map((shallowDay) => {
-      const day = { ...shallowDay };
-      day.spots = day.appointments.filter(
-        (appointment) => !appointments[appointment].interview
-      ).length;
-      return day;
-    });
-  };
-
   const bookInterview = (id, interview) => {
-    const appointment = {
-      ...state.appointments[id],
-      interview: { ...interview },
-    };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment,
-    };
-
-    return axios.put(`/api/appointments/${id}`, appointment).then((res) => {
-      if (res.status === 204) {
-        dispatch({
-          type: SET_INTERVIEW,
-          appointments,
-          days: updateSpots(appointments),
-        });
-      }
-    });
+    return axios.put(`/api/appointments/${id}`, { interview });
   };
 
   const cancelInterview = (id) => {
-    const appointment = {
-      ...state.appointments[id],
-      interview: null,
-    };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment,
-    };
-
-    return axios.delete(`/api/appointments/${id}`, appointment).then((res) => {
-      if (res.status === 204) {
-        dispatch({
-          type: SET_INTERVIEW,
-          appointments,
-          days: updateSpots(appointments),
-        });
-      }
-    });
+    return axios.delete(`/api/appointments/${id}`);
   };
 
   return { state, setDay, bookInterview, cancelInterview };
