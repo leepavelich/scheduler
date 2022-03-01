@@ -13,7 +13,7 @@ export default function useApplicationData() {
   const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
   const SET_INTERVIEW = "SET_INTERVIEW";
 
-  function reducer(state, action) {
+  const reducer = (state, action) => {
     switch (action.type) {
       case SET_DAY:
         return {
@@ -60,12 +60,12 @@ export default function useApplicationData() {
           `Tried to reduce with unsupported action type: ${action.type}`
         );
     }
-  }
+  };
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // database data
   useEffect(() => {
+    // database data
     Promise.all([
       axios.get("/api/days"),
       axios.get("/api/appointments"),
@@ -89,6 +89,7 @@ export default function useApplicationData() {
         dispatch({ type, id, interview });
       }
     };
+    return () => ws.close();
   }, []);
 
   const setDay = (day) => dispatch({ type: SET_DAY, day });
