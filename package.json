@@ -6,6 +6,7 @@
     "axios": "^0.26.0",
     "classnames": "^2.2.6",
     "fsevents": "^2.3.2",
+    "heroku": "^7.59.3",
     "node-gyp": "^8.4.1",
     "normalize.css": "^8.0.1",
     "react": "^16.9.0",
@@ -20,8 +21,7 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public --ci",
     "build-storybook": "build-storybook -s public",
-    "cypress": "./node_modules/.bin/cypress open",
-    "heroku": "./node_modules/.bin/heroku"
+    "cypress": "./node_modules/.bin/cypress open"
   },
   "browserslist": {
     "production": [
@@ -50,6 +50,9 @@
     "node-sass": "^4.14.0",
     "prop-types": "^15.8.1",
     "react-test-renderer": "^16.14.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.0.7"
   },
   "jest": {
     "watchPathIgnorePatterns": [
