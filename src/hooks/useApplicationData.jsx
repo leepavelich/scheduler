@@ -20,7 +20,7 @@ export default function useApplicationData() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    // database data
+    // database API
     Promise.all([
       axios.get("/api/days"),
       axios.get("/api/appointments"),
@@ -35,7 +35,7 @@ export default function useApplicationData() {
       });
     });
 
-    // websocket
+    // WebSocket
     if (!TESTING_MODE) {
       const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
       ws.onmessage = (event) => {
