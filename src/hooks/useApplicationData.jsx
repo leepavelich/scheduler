@@ -1,65 +1,18 @@
 import { useEffect, useReducer } from "react";
 import axios from "axios";
 
+import reducer, {
+  SET_DAY,
+  SET_APPLICATION_DATA,
+  SET_INTERVIEW,
+} from "reducers/application";
+
 export default function useApplicationData() {
   const initialState = {
     day: "Monday",
     days: [],
     appointments: {},
     interviewers: {},
-  };
-
-  const SET_DAY = "SET_DAY";
-  const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-  const SET_INTERVIEW = "SET_INTERVIEW";
-
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case SET_DAY:
-        return {
-          ...state,
-          day: action.day,
-        };
-
-      case SET_APPLICATION_DATA:
-        return {
-          ...state,
-          days: action.days,
-          appointments: action.appointments,
-          interviewers: action.interviewers,
-        };
-
-      case SET_INTERVIEW: {
-        const appointment = {
-          ...state.appointments[action.id],
-          interview: action.interview ? { ...action.interview } : null,
-        };
-        const appointments = {
-          ...state.appointments,
-          [action.id]: appointment,
-        };
-
-        // update spots, accounting for shallow copy
-        const days = [...state.days].map((shallowDay) => {
-          const day = { ...shallowDay };
-          day.spots = day.appointments.filter(
-            (appointment) => !appointments[appointment].interview
-          ).length;
-          return day;
-        });
-
-        return {
-          ...state,
-          appointments,
-          days,
-        };
-      }
-
-      default:
-        throw new Error(
-          `Tried to reduce with unsupported action type: ${action.type}`
-        );
-    }
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -97,13 +50,13 @@ export default function useApplicationData() {
   const bookInterview = (id, interview) => {
     return axios
       .put(`/api/appointments/${id}`, { interview })
-      .then(() => dispatch({ type: "SET_INTERVIEW", id, interview })); // testing, not needed for WebSockets
+      .then(() => dispatch({ type: SET_INTERVIEW, id, interview })); // testing, not needed for WebSockets
   };
 
   const cancelInterview = (id) => {
     return axios
       .delete(`/api/appointments/${id}`)
-      .then(() => dispatch({ type: "SET_INTERVIEW", id, interview: null })); // testing, not needed for WebSockets
+      .then(() => dispatch({ type: SET_INTERVIEW, id, interview: null })); // testing, not needed for WebSockets
   };
 
   return { state, setDay, bookInterview, cancelInterview };
