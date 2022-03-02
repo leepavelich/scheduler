@@ -25,6 +25,7 @@ export default function Form(props) {
       return;
     }
 
+    // Interferes with tests
     // if (!interviewer) {
     //   setError("Must select an interviewer");
     //   return;
