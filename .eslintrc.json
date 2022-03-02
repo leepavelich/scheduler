@@ -1,7 +1,4 @@
 {
-  "extends": "react-app",
-  "parser": "babel-eslint",
-  "globals": {
-    "cy": true
-  }
+  "extends": ["react-app", "plugin:cypress/recommended"],
+  "parser": "babel-eslint"
 }
