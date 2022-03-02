@@ -7,6 +7,8 @@ import reducer, {
   SET_INTERVIEW,
 } from "reducers/application";
 
+const TESTING_MODE = true; // true for testing, false for WebSockets
+
 export default function useApplicationData() {
   const initialState = {
     day: "Monday",
@@ -33,30 +35,36 @@ export default function useApplicationData() {
       });
     });
 
-    // // websocket
-    // const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-    // ws.onmessage = (event) => {
-    //   const { type, id, interview } = JSON.parse(event.data);
+    // websocket
+    if (!TESTING_MODE) {
+      const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+      ws.onmessage = (event) => {
+        const { type, id, interview } = JSON.parse(event.data);
 
-    //   if (type === "SET_INTERVIEW") {
-    //     dispatch({ type, id, interview });
-    //   }
-    // };
-    // return () => ws.close();
+        if (type === "SET_INTERVIEW") {
+          dispatch({ type, id, interview });
+        }
+      };
+      return () => ws.close();
+    }
   }, []);
 
   const setDay = (day) => dispatch({ type: SET_DAY, day });
 
   const bookInterview = (id, interview) => {
-    return axios
-      .put(`/api/appointments/${id}`, { interview })
-      .then(() => dispatch({ type: SET_INTERVIEW, id, interview })); // testing, not needed for WebSockets
+    return TESTING_MODE
+      ? axios
+          .put(`/api/appointments/${id}`, { interview })
+          .then(() => dispatch({ type: SET_INTERVIEW, id, interview }))
+      : axios.put(`/api/appointments/${id}`, { interview });
   };
 
   const cancelInterview = (id) => {
-    return axios
-      .delete(`/api/appointments/${id}`)
-      .then(() => dispatch({ type: SET_INTERVIEW, id, interview: null })); // testing, not needed for WebSockets
+    return TESTING_MODE
+      ? axios
+          .delete(`/api/appointments/${id}`)
+          .then(() => dispatch({ type: SET_INTERVIEW, id, interview: null }))
+      : axios.delete(`/api/appointments/${id}`);
   };
 
   return { state, setDay, bookInterview, cancelInterview };
