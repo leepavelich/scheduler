@@ -79,4 +79,13 @@ export default {
       });
     }
   }),
+
+  put: jest.fn((url, { interview }) => {
+    const id = url.slice(-1);
+    fixtures.appointments[id].interview = interview;
+    return Promise.resolve({
+      state: 204,
+      statusText: "No Content",
+    });
+  }),
 };
