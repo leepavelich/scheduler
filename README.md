@@ -48,6 +48,10 @@ Unit and integration testing with Jest
 
 ![Jest Testing](https://github.com/leepavelich/scheduler/blob/master/docs/jest-coverage.png?raw=true)
 
+UI testing with Storybook
+
+![Storybook testing](https://github.com/leepavelich/scheduler/blob/master/docs/storybook.png?raw=true)
+
 ## Setup
 
 Install dependencies with `npm install`.
@@ -56,6 +60,12 @@ Install dependencies with `npm install`.
 
 ```sh
 npm start
+```
+
+## Running Cypress Test Framework
+
+```sh
+npm run cypress
 ```
 
 ## Running Jest Test Framework
@@ -69,3 +79,30 @@ npm test
 ```sh
 npm run storybook
 ```
+
+## Tech Stack
+
+### Front-end
+
+- [React](https://reactjs.org/)
+- [Sass](https://sass-lang.com/)
+- [Axios](https://axios-http.com/docs/intro)
+
+### Back-end
+
+- [Node.js](https://nodejs.org/en/)
+- [Express](https://expressjs.com/)
+- [PostreSQL](https://www.postgresql.org/)
+- [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) - Optional (interferes with testing, set with `TESTING_MODE` flag set to `false` in `/src/hooks/useApplicationData.jsx`)
+
+### Testing
+
+- [Cypress](https://www.cypress.io/) - End-to-end
+- [Jest](https://jestjs.io/) - Unit and integration
+- [Storybook](https://storybook.js.org/docs/react/writing-tests/introduction) - UI
+
+### Cloud Services
+
+- [CircleCI](https://circleci.com/) - Continuous integration
+- [Heroku](https://www.heroku.com/) - Database API hosting
+- [Netlify](https://www.netlify.com/) - Serverless backend
