@@ -36,17 +36,17 @@ export default function useApplicationData() {
     });
 
     // WebSocket
-    if (!TESTING_MODE) {
-      const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-      ws.onmessage = (event) => {
-        const { type, id, interview } = JSON.parse(event.data);
+    if (TESTING_MODE) return;
 
-        if (type === "SET_INTERVIEW") {
-          dispatch({ type, id, interview });
-        }
-      };
-      return () => ws.close();
-    }
+    const ws = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+    ws.onmessage = (event) => {
+      const { type, id, interview } = JSON.parse(event.data);
+
+      if (type === "SET_INTERVIEW") {
+        dispatch({ type, id, interview });
+      }
+    };
+    return () => ws.close();
   }, []);
 
   const setDay = (day) => dispatch({ type: SET_DAY, day });
