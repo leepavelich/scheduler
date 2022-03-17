@@ -92,7 +92,7 @@ npm run storybook
 
 - [Node.js](https://nodejs.org/en/)
 - [Express](https://expressjs.com/)
-- [PostreSQL](https://www.postgresql.org/)
+- [PostgreSQL](https://www.postgresql.org/)
 - [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) - Optional (interferes with testing, set with `TESTING_MODE` flag set to `false` in `/src/hooks/useApplicationData.jsx`)
 
 ### Testing
